@@ -19,7 +19,7 @@ export class AuthService {
     let user = await this.usersService.finOneByEmail(auth.email);
     if (!user) throw new BadRequestException("invalidInformation");
 
-    console.log(user.role);
+
     const matches = await comparePassword(auth.password, user.password);
     if (!matches) {
       throw new BadRequestException("invalidPassword");

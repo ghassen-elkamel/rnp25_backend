@@ -5,19 +5,18 @@ import { Column, DeleteDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, One
 import { NotificationToken } from "src/modules/notification-token/entities/notification-token.entity";
 import { Company } from "src/modules/company/entities/company.entity";
 import { FormResponse } from "src/modules/form_response/entities/form_response.entity";
-
+import { UserEvent } from "src/modules/user-event/entities/user-event.entity";
 
 @Entity()
 export class User extends AbstractEntity {
   @ManyToOne((type) => Role)
-  @JoinColumn({ name: "role" ,
-  })
+  @JoinColumn({ name: "role" })
   role: Role;
 
   @Column({ select: false })
   password: string;
 
-  @Column({ nullable: false ,unique: true})
+  @Column({ nullable: false, unique: true })
   email: string;
 
   @Column({ default: "" })
@@ -32,8 +31,6 @@ export class User extends AbstractEntity {
   @Column({ nullable: true })
   pathPicture: string;
 
-
-
   @Column()
   isVerified: boolean;
 
@@ -42,22 +39,21 @@ export class User extends AbstractEntity {
 
   @Column()
   isBlocked: boolean;
-@OneToOne(()=>Company,(company=>company.supervisor))
-company:Company
+  @OneToOne(() => Company, (company) => company.supervisor)
+  company: Company;
 
   @OneToMany((type) => NotificationToken, (notificationToken) => notificationToken.user)
   notificationToken: NotificationToken[];
 
   @Column({ default: "en" })
   language: string;
-  @OneToMany(()=>FormResponse,(formResponse)=>formResponse.user)
-  formResponses:FormResponse[]
+  @OneToMany(() => FormResponse, (formResponse) => formResponse.user)
+  formResponses: FormResponse[];
 
+  @OneToMany(() => UserEvent, (userEvent) => userEvent.user)
+  events: UserEvent[];
   @DeleteDateColumn()
   deletedAt: Date;
-  
-
-
 
   constructor(userId?: number) {
     super();
@@ -66,5 +62,4 @@ company:Company
   public toString(): string {
     return this.fullName;
   }
-
 }

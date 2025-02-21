@@ -1,6 +1,7 @@
 import { CreationEntity } from "src/common/entities/creation.entity";
 import { Company } from "src/modules/company/entities/company.entity";
-import { Column, Entity, JoinColumn, ManyToOne } from "typeorm";
+import { UserEvent } from "src/modules/user-event/entities/user-event.entity";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from "typeorm";
 @Entity()
 export class Event extends CreationEntity{
     @Column()
@@ -20,6 +21,8 @@ export class Event extends CreationEntity{
     @ManyToOne(()=>Company,(company=>company.events))
     @JoinColumn()
     company:Company
+    @OneToMany(()=>UserEvent,(userEvent=>userEvent.event))
+    users:UserEvent[]
 
 
     

@@ -7,10 +7,7 @@ import { UpdateFormQuestionDto } from './dto/update-form-question.dto';
 export class FormQuestionController {
   constructor(private readonly formQuestionService: FormQuestionService) {}
 
-  @Post()
-  create(@Body() createFormQuestionDto: CreateFormQuestionDto) {
-    return this.formQuestionService.create(createFormQuestionDto);
-  }
+
 
   @Get()
   findAll() {

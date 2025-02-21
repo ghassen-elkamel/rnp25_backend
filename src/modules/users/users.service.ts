@@ -23,6 +23,8 @@ import { NotificationType } from "src/enums/notification.enum";
 import { Role } from "./entities/role.entity";
 
 import { use } from "passport";
+import { UserEventService } from "../user-event/user-event.service";
+import { CreateUserEventDto } from "../user-event/dto/create-user-event.dto";
 
 @Injectable()
 export class UsersService {
@@ -33,6 +35,7 @@ export class UsersService {
     private notificationTokenService: NotificationTokenService,
     @Inject(forwardRef(() => NotificationsService))
     private notificationsService: NotificationsService,
+    private readonly userEventService : UserEventService
   ) {}
 
   async create(createUserDto: CreateUserDto) {
@@ -72,6 +75,11 @@ export class UsersService {
       newUser.password = password;
     }
     await this.addTokenToUser(createUserDto.fcmToken, newUser);
+    let createUserEventDto :CreateUserEventDto = new CreateUserEventDto()
+    createUserEventDto.userId=newUser.id
+    createUserEventDto.eventId=2
+
+await this.userEventService.create(createUserEventDto)
     return newUser;
   }
 

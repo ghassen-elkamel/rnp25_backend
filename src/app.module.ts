@@ -23,6 +23,7 @@ import { FormModule } from './modules/form/form.module';
 import { FormQuestionModule } from './modules/form-question/form-question.module';
 import { FormResponseModule } from './modules/form_response/form_response.module';
 import { QuestionResponseModule } from './modules/question_response/question_response.module';
+import { UserEventModule } from './modules/user-event/user-event.module';
 @Global()
 @Module({
   imports: [
@@ -50,8 +51,9 @@ import { QuestionResponseModule } from './modules/question_response/question_res
     EventsModule,
     FormResponseModule,
     QuestionResponseModule,
-    //FormModule,
-    //FormQuestionModule,
+    UserEventModule,
+    FormModule,
+    FormQuestionModule,
 
   ],
   controllers: [AppController],

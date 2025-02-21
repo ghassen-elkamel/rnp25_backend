@@ -4,7 +4,7 @@ import { FormResponse } from "src/modules/form_response/entities/form_response.e
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
-export class Form  {
+export class Form extends CreationEntity {
   @Column()
   title: string;
 
@@ -19,4 +19,6 @@ export class Form  {
 
   @OneToMany(() => FormResponse, (response) => response.form)
   responses: FormResponse[];
+  @Column({ default: false })
+  isSignUpForm: boolean;
 }

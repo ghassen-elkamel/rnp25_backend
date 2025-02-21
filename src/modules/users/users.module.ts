@@ -6,12 +6,14 @@ import { User } from "./entities/user.entity";
 
 import { NotificationsModule } from "../notifications/notifications.module";
 import { NotificationTokenModule } from "../notification-token/notification-token.module";
+import { UserEventModule } from "../user-event/user-event.module";
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([User]),
     NotificationTokenModule,
     forwardRef(() => NotificationsModule),
+    forwardRef(() => UserEventModule),
 
   ],
   controllers: [UsersController],

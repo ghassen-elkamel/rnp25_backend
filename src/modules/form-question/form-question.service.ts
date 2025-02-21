@@ -1,11 +1,21 @@
 import { Injectable } from '@nestjs/common';
 import { CreateFormQuestionDto } from './dto/create-form-question.dto';
 import { UpdateFormQuestionDto } from './dto/update-form-question.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { FormQuestion } from './entities/form-question.entity';
+import { Repository } from 'typeorm';
+import { Form } from '../form/entities/form.entity';
 
 @Injectable()
 export class FormQuestionService {
-  create(createFormQuestionDto: CreateFormQuestionDto) {
-    return 'This action adds a new formQuestion';
+  constructor(
+    @InjectRepository(FormQuestion)
+    private readonly repository: Repository<FormQuestion>,
+  ) {}
+  create(createFormQuestionDto: CreateFormQuestionDto,form :Form) {
+
+    createFormQuestionDto.form=form;
+    return this.repository.save(createFormQuestionDto);
   }
 
   findAll() {
