@@ -18,12 +18,12 @@ import { CompanyModule } from "./modules/company/company.module";
 
 import * as path from "path";
 import { AcceptLanguageResolver, HeaderResolver, I18nModule, QueryResolver } from "nestjs-i18n";
-import { EventsModule } from './modules/events/events.module';
-import { FormModule } from './modules/form/form.module';
-import { FormQuestionModule } from './modules/form-question/form-question.module';
-import { FormResponseModule } from './modules/form_response/form_response.module';
-import { QuestionResponseModule } from './modules/question_response/question_response.module';
-import { UserEventModule } from './modules/user-event/user-event.module';
+import { EventsModule } from "./modules/events/events.module";
+
+import { UserEventModule } from "./modules/user-event/user-event.module";
+import { SubscirptionFormModule } from './modules/subscirption_form/subscirption_form.module';
+import { OlmModule } from './modules/olm/olm.module';
+import { SubscriptionOptionModule } from './modules/subscription-option/subscription-option.module';
 @Global()
 @Module({
   imports: [
@@ -49,12 +49,10 @@ import { UserEventModule } from './modules/user-event/user-event.module';
     NotificationTokenModule,
     CompanyModule,
     EventsModule,
-    FormResponseModule,
-    QuestionResponseModule,
     UserEventModule,
-    FormModule,
-    FormQuestionModule,
-
+    SubscirptionFormModule,
+    OlmModule,
+    SubscriptionOptionModule,
   ],
   controllers: [AppController],
   providers: [

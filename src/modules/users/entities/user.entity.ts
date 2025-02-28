@@ -4,8 +4,8 @@ import { Column, DeleteDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, One
 
 import { NotificationToken } from "src/modules/notification-token/entities/notification-token.entity";
 import { Company } from "src/modules/company/entities/company.entity";
-import { FormResponse } from "src/modules/form_response/entities/form_response.entity";
 import { UserEvent } from "src/modules/user-event/entities/user-event.entity";
+import { SubscirptionForm } from "src/modules/subscirption_form/entities/subscirption_form.entity";
 
 @Entity()
 export class User extends AbstractEntity {
@@ -47,13 +47,14 @@ export class User extends AbstractEntity {
 
   @Column({ default: "en" })
   language: string;
-  @OneToMany(() => FormResponse, (formResponse) => formResponse.user)
-  formResponses: FormResponse[];
+  @OneToMany(() => SubscirptionForm, (SubscirptionForm) => SubscirptionForm.user)
+  subscirptionForm: SubscirptionForm[];
 
   @OneToMany(() => UserEvent, (userEvent) => userEvent.user)
   events: UserEvent[];
   @DeleteDateColumn()
   deletedAt: Date;
+
 
   constructor(userId?: number) {
     super();

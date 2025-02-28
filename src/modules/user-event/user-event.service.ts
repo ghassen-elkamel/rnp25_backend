@@ -45,14 +45,18 @@ return this.repository.save(createUserEventDto);
   remove(id: number) {
     return `This action removes a #${id} userEvent`;
   }
-  verifyUuid(uuid: string) {
-    return this.repository.findOne({
+  async verifyUuid(uuid: string) {
+    let item=await this.repository.findOne({
       where: { uuid: uuid },
       relations: {
         user: true,
         event: true,
       },
     });
+
+
+    return item;
+    
   }
   findUserEventByEvent(eventId: number, userId: number) {
     return this.repository.findOne({

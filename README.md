@@ -3,15 +3,15 @@
 Builds, (re)creates, starts, and attaches to containers for a service.
 
 ````
- docker compose -f docker-compose-local.yml up```
+ docker compose -f docker-compose.yml up```
 
 ## Reload container, add package
 
 ````
 
-docker compose -f docker-compose-local.yml build --no-cache
+docker compose -f docker-compose.yml build --no-cache
 
-docker compose  --build -V
+docker compose -f docker-compose.yml up --build -V
 
 ```
 
@@ -52,9 +52,13 @@ docker exec -it <container name> /bin/bash
 
 ```
 
-npx typeorm migration:generate src/db/migrations/form -d dist/db/data-source.js
+npx typeorm migration:generate src/db/migrations/subsciption_form -d dist/db/data-source.js
 
 ```
+4- Excecute the migration
+
+```
+npx typeorm migration:run -d dist/db/data-source.js
 
 ## Migration callback
 ```
@@ -67,7 +71,7 @@ npx typeorm migration:revert -d dist/db/data-source.js
 
 ```
 
-npx typeorm migration:create src/db/seeders/name_of_seeder
+npx typeorm migration:create src/db/seeders/olm
 
 ```
 
@@ -82,7 +86,7 @@ npx prettier --write .
 
 ```
 
-kubectl delete -f ecotrans_backend.yaml && kubectl apply -f ecotrans_backend.yaml
+kubectl delete -f xchange_backend.yaml && kubectl apply -f xchange_backend.yaml
 
 ```
 

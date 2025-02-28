@@ -35,7 +35,7 @@ export class UsersService {
     private notificationTokenService: NotificationTokenService,
     @Inject(forwardRef(() => NotificationsService))
     private notificationsService: NotificationsService,
-    private readonly userEventService : UserEventService
+    private readonly userEventService: UserEventService,
   ) {}
 
   async create(createUserDto: CreateUserDto) {
@@ -49,8 +49,6 @@ export class UsersService {
         throw new BadRequestException("thisUsernameAlreadyExistsPleaseTryAgain");
       }
     }
-
-
 
     createUserDto.isActive = true;
     createUserDto.isVerified = true;
@@ -68,6 +66,9 @@ export class UsersService {
     }
 
     const newUser = await this.usersRepository.create(createUserDto);
+    console.log(newUser);
+    console.log("newUser");
+
     await this.usersRepository.save(newUser);
 
     delete newUser.role;
@@ -75,11 +76,7 @@ export class UsersService {
       newUser.password = password;
     }
     await this.addTokenToUser(createUserDto.fcmToken, newUser);
-    let createUserEventDto :CreateUserEventDto = new CreateUserEventDto()
-    createUserEventDto.userId=newUser.id
-    createUserEventDto.eventId=2
 
-await this.userEventService.create(createUserEventDto)
     return newUser;
   }
 
@@ -92,8 +89,6 @@ await this.userEventService.create(createUserEventDto)
       relations: {
         notificationToken: true,
         role: true,
-
-    
       },
       select: {
         id: true,
@@ -106,7 +101,7 @@ await this.userEventService.create(createUserEventDto)
           code: true,
           label: true,
         },
-    
+
         isBlocked: true,
         deletedAt: true,
         isVerified: true,
@@ -144,7 +139,6 @@ await this.userEventService.create(createUserEventDto)
         id: id,
       },
       relations: {
-
         role: true,
       },
     });
@@ -161,7 +155,6 @@ await this.userEventService.create(createUserEventDto)
       where: {
         id: id,
       },
-    
     });
 
     if (!user) throw new NotFoundException("User does not exist");
@@ -176,7 +169,6 @@ await this.userEventService.create(createUserEventDto)
       },
       relations: {
         role: true,
-
       },
     });
 
@@ -188,7 +180,7 @@ await this.userEventService.create(createUserEventDto)
   async update(user: UpdateUserDto) {
     const oldItem = await this.usersRepository.findOne({
       where: { id: user.id },
-      relations: {  role: true },
+      relations: { role: true },
     });
 
     if (!oldItem) {
@@ -200,21 +192,17 @@ await this.userEventService.create(createUserEventDto)
       throw new BadRequestException("thisUsernameAlreadyExistsPleaseTryAgain");
     }
 
-
-
     return this.usersRepository.save(user);
   }
 
   async findAllByRole(args: { roles: RolesType[]; companyId: number }) {
     const users = await this.usersRepository.find({
       where: {
-   
         role: {
           code: In(args.roles),
         },
       },
       relations: {
-       
         role: true,
       },
       order: {
@@ -226,32 +214,26 @@ await this.userEventService.create(createUserEventDto)
   }
 
   async deleteUser(userId: number) {
-    const user = await this.usersRepository.findOne({ where: { id: userId },  });
+    const user = await this.usersRepository.findOne({ where: { id: userId } });
     const result = await this.usersRepository.softDelete({
       id: userId,
     });
 
     if (result.affected > 0) {
       const numberOfUsers = await this.usersRepository.count({
-        where: {
-   
-        },
+        where: {},
       });
-
     }
 
     return result;
   }
 
   async countByRole(rolesType: RolesType, branchId: number, companyId: number): Promise<number> {
-
-
     return await this.usersRepository.count({
       where: {
         role: {
           code: rolesType,
         },
-
       },
     });
   }
@@ -304,7 +286,6 @@ await this.userEventService.create(createUserEventDto)
     let roles = [RolesType.admin];
     const users = await this.usersRepository.find({
       where: {
-
         role: {
           code: In(roles),
         },
@@ -365,18 +346,15 @@ await this.userEventService.create(createUserEventDto)
   async saveChanges(user: User) {
     return await this.usersRepository.save(user);
   }
- async  finOneByEmail(email: string) {
+  async finOneByEmail(email: string) {
     const user = await this.usersRepository.findOne({
       where: {
-
-email:email
+        email: email,
       },
       relations: {
         notificationToken: true,
         role: true,
-        company :true
-
-     
+        company: true,
       },
       select: {
         id: true,
@@ -389,7 +367,7 @@ email:email
           code: true,
           label: true,
         },
-     
+
         isBlocked: true,
         deletedAt: true,
         isVerified: true,
