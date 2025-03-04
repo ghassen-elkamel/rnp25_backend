@@ -4,7 +4,6 @@ import { RolesType } from "src/enums/roles.enum";
 import { AuthDto } from "src/modules/auth/dto/auth.dto";
 import { Company } from "src/modules/company/entities/company.entity";
 
-
 import { Role } from "src/modules/users/entities/role.entity";
 
 export class CreateUserDto extends AuthDto {
@@ -12,14 +11,11 @@ export class CreateUserDto extends AuthDto {
   @IsNotEmpty()
   fullName: string;
 
-
   @ApiProperty()
-  @IsOptional()
-  @IsEmail({}, { message: "Adresse e-mail invalide" })
   email: string;
 
   @ApiProperty()
-  @IsNotEmpty()
+  @IsOptional()
   phoneNumber: string;
 
   @ApiProperty()
@@ -30,25 +26,23 @@ export class CreateUserDto extends AuthDto {
   @IsOptional()
   password: string;
 
-
-
-company:Company
+  company: Company;
 
   @ApiProperty()
   @IsOptional()
   @IsEnum(RolesType)
   receivedRole: RolesType;
 
-  @IsEmpty()
+
   role: Role;
 
-  @IsEmpty()
+
   isVerified: boolean;
 
-  @IsEmpty()
+
   isActive: boolean;
 
-  @IsEmpty()
+
   isBlocked: boolean;
 
   @ApiProperty()
@@ -56,6 +50,4 @@ company:Company
 
   @ApiProperty()
   language: string;
-
-
 }

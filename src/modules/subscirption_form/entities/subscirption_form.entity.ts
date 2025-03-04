@@ -3,10 +3,12 @@ import { PositionType } from "src/enums/position-type.enum";
 import { Olm } from "src/modules/olm/entities/olm.entity";
 import { SubscriptionOption } from "src/modules/subscription-option/entities/subscription-option.entity";
 import { User } from "src/modules/users/entities/user.entity";
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from "typeorm";
+import { BeforeInsert, Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne } from "typeorm";
+import { v4 as uuidv4 } from 'uuid';
+
 @Entity()
 export class SubscirptionForm extends CreationEntity {
-  @ManyToOne(() => User, (user) => user.subscirptionForm)
+  @OneToOne(() => User, (user) => user.subscirptionForm)
   @JoinColumn()
   user: User;
   @Column()
@@ -17,8 +19,17 @@ export class SubscirptionForm extends CreationEntity {
   @ManyToOne(() => Olm, (olm) => olm.susbcriptionForms)
   @JoinColumn()
   olm: Olm;
-
   @ManyToOne(() => SubscriptionOption, (subscriptionOption) => subscriptionOption.subscirptionForms)
   @JoinColumn()
   subscriptionOption: SubscriptionOption;
+  @Column({ nullable: true })
+  pathReciept: string;
+  @Column({ nullable: true,unique:true })
+  uuid: string;
+  @BeforeInsert()
+ generateUUID() {
+   if (!this.uuid) {
+     this.uuid = uuidv4();
+   }
+ }
 }

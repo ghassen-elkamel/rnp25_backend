@@ -4,15 +4,11 @@ import { Column, Entity, JoinColumn, ManyToMany, ManyToOne, OneToMany } from "ty
 
 @Entity()
 export class SubscriptionOption extends CreationEntity {
-    @Column()
-    subscriptionType: String;
-    @Column(
-        {type: 'decimal', precision: 10, scale: 2}
-    )
-    price: number;
-    @OneToMany(()=>SubscirptionForm, (subscirptionForm)=>subscirptionForm.subscriptionOption)
-@JoinColumn()
-    subscirptionForms: SubscirptionForm[];
-  
-
+  @Column()
+  subscriptionType: String;
+  @Column({ type: "decimal", precision: 10, scale: 2 })
+  price: number;
+  @OneToMany(() => SubscirptionForm, (subscirptionForm) => subscirptionForm.subscriptionOption)
+  @JoinColumn()
+  subscirptionForms: SubscirptionForm[];
 }

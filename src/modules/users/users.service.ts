@@ -25,6 +25,8 @@ import { Role } from "./entities/role.entity";
 import { use } from "passport";
 import { UserEventService } from "../user-event/user-event.service";
 import { CreateUserEventDto } from "../user-event/dto/create-user-event.dto";
+import { SubscirptionForm } from "../subscirption_form/entities/subscirption_form.entity";
+import { SubscriptionOption } from "../subscription-option/entities/subscription-option.entity";
 
 @Injectable()
 export class UsersService {
@@ -39,8 +41,11 @@ export class UsersService {
   ) {}
 
   async create(createUserDto: CreateUserDto) {
-    const user = await this.finOneByEmail(createUserDto.phoneNumber);
+    const user = await this.finOneByEmail(createUserDto.email);
     if (user) {
+
+
+      
       if (user.deletedAt) {
         await this.usersRepository.restore({ id: user.id });
         await this.addTokenToUser(createUserDto.fcmToken, user);
@@ -50,8 +55,8 @@ export class UsersService {
       }
     }
 
-    createUserDto.isActive = true;
-    createUserDto.isVerified = true;
+    createUserDto.isActive = false;
+    createUserDto.isVerified = false;
     createUserDto.isBlocked = false;
     createUserDto.role = new Role(RolesType.client);
 
@@ -66,8 +71,6 @@ export class UsersService {
     }
 
     const newUser = await this.usersRepository.create(createUserDto);
-    console.log(newUser);
-    console.log("newUser");
 
     await this.usersRepository.save(newUser);
 
@@ -204,6 +207,10 @@ export class UsersService {
       },
       relations: {
         role: true,
+        subscirptionForm: {
+          subscriptionOption: true,
+          olm: true,
+        },
       },
       order: {
         createdAt: Order.DESC,

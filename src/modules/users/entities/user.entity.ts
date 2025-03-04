@@ -47,14 +47,13 @@ export class User extends AbstractEntity {
 
   @Column({ default: "en" })
   language: string;
-  @OneToMany(() => SubscirptionForm, (SubscirptionForm) => SubscirptionForm.user)
+  @OneToOne(() => SubscirptionForm, (SubscirptionForm) => SubscirptionForm.user)
   subscirptionForm: SubscirptionForm[];
 
   @OneToMany(() => UserEvent, (userEvent) => userEvent.user)
   events: UserEvent[];
   @DeleteDateColumn()
   deletedAt: Date;
-
 
   constructor(userId?: number) {
     super();

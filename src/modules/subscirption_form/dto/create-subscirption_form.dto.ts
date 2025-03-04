@@ -1,4 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
+import { IsEmpty } from "class-validator";
 import { Subscription } from "rxjs";
 import { PositionType } from "src/enums/position-type.enum";
 import { Olm } from "src/modules/olm/entities/olm.entity";
@@ -20,6 +21,8 @@ export class CreateSubscirptionFormDto  {
     olm:Olm;
     user :User
 subscriptionOption:SubscriptionOption
+pathReciept:string
+
     
 
 }
