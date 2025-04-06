@@ -15,9 +15,17 @@ import { AppConfigModule } from "./modules/app-config/app-config.module";
 import { NotificationsModule } from "./modules/notifications/notifications.module";
 import { NotificationTokenModule } from "./modules/notification-token/notification-token.module";
 import { CompanyModule } from "./modules/company/company.module";
-import { BranchModule } from "./modules/branch/branch.module";
+
 import * as path from "path";
 import { AcceptLanguageResolver, HeaderResolver, I18nModule, QueryResolver } from "nestjs-i18n";
+import { EventsModule } from "./modules/events/events.module";
+
+import { UserEventModule } from "./modules/user-event/user-event.module";
+import { SubscirptionFormModule } from './modules/subscirption_form/subscirption_form.module';
+import { OlmModule } from './modules/olm/olm.module';
+import { SubscriptionOptionModule } from './modules/subscription-option/subscription-option.module';
+import { TaskModule } from './modules/task/task.module';
+import { SubtasksModule } from './modules/subtasks/subtasks.module';
 @Global()
 @Module({
   imports: [
@@ -42,7 +50,13 @@ import { AcceptLanguageResolver, HeaderResolver, I18nModule, QueryResolver } fro
     NotificationsModule,
     NotificationTokenModule,
     CompanyModule,
-    BranchModule,
+    EventsModule,
+    UserEventModule,
+    SubscirptionFormModule,
+    OlmModule,
+    SubscriptionOptionModule,
+    TaskModule,
+    SubtasksModule,
   ],
   controllers: [AppController],
   providers: [

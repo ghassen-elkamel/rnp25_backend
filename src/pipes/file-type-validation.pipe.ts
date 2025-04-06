@@ -3,9 +3,11 @@ import { PipeTransform, Injectable, ArgumentMetadata, BadRequestException } from
 @Injectable()
 export class FilesTypeValidationPipe implements PipeTransform {
   transform(value: any, metadata: ArgumentMetadata) {
-    value.forEach((item) => {
-      fileTypeValidation(item);
-    });
+    if (value && Array.isArray(value)) {
+      value.forEach((item) => {
+        fileTypeValidation(item);
+      });
+    }
     return value;
   }
 }

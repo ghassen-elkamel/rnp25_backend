@@ -10,10 +10,8 @@ import {
   BadRequestException,
   Query,
   Patch,
-  UnauthorizedException,
   UploadedFile,
   Res,
-  UseInterceptors,
 } from "@nestjs/common";
 import { UsersService } from "./users.service";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
@@ -34,7 +32,7 @@ import { GetUsersQueryDto } from "./dto/get-users-query.dto";
 @UseGuards(JwtAuthGuard)
 @Controller("v1/users")
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(private readonly usersService: UsersService) { }
   @Get()
   async findAll(@Query() query: GetUsersQueryDto, @Req() req) {
     let companyId: number = req.user.companyId;
@@ -45,13 +43,16 @@ export class UsersController {
     let items = await this.usersService.findAllByRole({ roles: query.roles, companyId });
     return { items };
   }
-
+  @Post("admin")
+  createByAdmin(@Body() createUserDto: CreateUserDto, @Req() req) {
+    createUserDto.role = new Role(RolesType.supervisor);
+    return this.usersService.create(createUserDto);
+  }
+  @Public()
   @Post()
   create(@Body() createUserDto: CreateUserDto, @Req() req) {
-    let companyId = req.user.companyId;
-
     createUserDto.role = new Role(createUserDto.receivedRole);
-    return this.usersService.create(createUserDto, companyId);
+    return this.usersService.create(createUserDto);
   }
 
   @Get("me")
@@ -64,9 +65,7 @@ export class UsersController {
 
   @Patch()
   update(@Req() req, @Body() user: UpdateUserDto) {
-    let companyId = req.user.companyId;
-
-    return this.usersService.update(user, companyId);
+    return this.usersService.update(user);
   }
 
   @Get(":id")
@@ -130,5 +129,13 @@ export class UsersController {
     res.sendFile(newPath, {
       root: root ?? process.env.ASSETS_DIR,
     });
+  }
+  @Patch('activate/:id')
+  activateUser(@Param('id') id: string) {
+    return this.usersService.activateUser(+id);
+  }
+  @Patch('block/:id')
+  blockUser(@Param('id') id: string) {
+    return this.usersService.blockUser(+id);
   }
 }

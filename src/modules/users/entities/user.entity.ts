@@ -1,8 +1,11 @@
 import { AbstractEntity } from "src/common/entities/abstract.entity";
 import { Role } from "src/modules/users/entities/role.entity";
-import { Column, DeleteDateColumn, Entity, JoinColumn, ManyToOne, OneToMany } from "typeorm";
-import { Branch } from "src/modules/branch/entities/branch.entity";
+import { Column, DeleteDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne } from "typeorm";
+
 import { NotificationToken } from "src/modules/notification-token/entities/notification-token.entity";
+import { Company } from "src/modules/company/entities/company.entity";
+import { UserEvent } from "src/modules/user-event/entities/user-event.entity";
+import { SubscirptionForm } from "src/modules/subscirption_form/entities/subscirption_form.entity";
 
 @Entity()
 export class User extends AbstractEntity {
@@ -10,23 +13,14 @@ export class User extends AbstractEntity {
   @JoinColumn({ name: "role" })
   role: Role;
 
-  @Column({ length: 30, default: "" })
-  externalCode: string;
-
-  @Column({ length: 30, unique: true })
-  username: string;
-
   @Column({ select: false })
   password: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: false, unique: true })
   email: string;
 
-  @Column()
-  firstName: string;
-
-  @Column()
-  lastName: string;
+  @Column({ default: "" })
+  fullName: string;
 
   @Column()
   phoneNumber: string;
@@ -37,10 +31,6 @@ export class User extends AbstractEntity {
   @Column({ nullable: true })
   pathPicture: string;
 
-  @ManyToOne((type) => Branch, { nullable: true })
-  @JoinColumn()
-  branch: Branch;
-
   @Column()
   isVerified: boolean;
 
@@ -49,25 +39,27 @@ export class User extends AbstractEntity {
 
   @Column()
   isBlocked: boolean;
+  @OneToOne(() => Company, (company) => company.supervisor)
+  company: Company;
 
   @OneToMany((type) => NotificationToken, (notificationToken) => notificationToken.user)
   notificationToken: NotificationToken[];
 
   @Column({ default: "en" })
   language: string;
+  @OneToOne(() => SubscirptionForm, (SubscirptionForm) => SubscirptionForm.user)
+  subscirptionForm: SubscirptionForm[];
 
+  @OneToMany(() => UserEvent, (userEvent) => userEvent.user)
+  events: UserEvent[];
   @DeleteDateColumn()
   deletedAt: Date;
-
-  get fullName(): string {
-    return this.firstName + " " + this.lastName + " " + this.externalCode ?? "";
-  }
 
   constructor(userId?: number) {
     super();
     this.id = userId;
   }
   public toString(): string {
-    return this.firstName + " " + this.lastName + " " + this.externalCode ?? "";
+    return this.fullName;
   }
 }

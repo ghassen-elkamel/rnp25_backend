@@ -30,3 +30,9 @@ export function ApiFiles(dir: string) {
     ),
   );
 }
+export function ApiFilesAWS() {
+  return applyDecorators(
+    ApiConsumes("multipart/form-data"),
+    UseInterceptors(FilesInterceptor("files", 50, {})),
+  );
+}

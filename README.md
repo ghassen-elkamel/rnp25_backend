@@ -52,7 +52,7 @@ docker exec -it <container name> /bin/bash
 
 ```
 
-npx typeorm migration:generate src/db/migrations/update_user -d dist/db/data-source.js
+npx typeorm migration:generate src/db/migrations/task -d dist/db/data-source.js
 
 ```
 4- Excecute the migration
@@ -71,7 +71,7 @@ npx typeorm migration:revert -d dist/db/data-source.js
 
 ```
 
-npx typeorm migration:create src/db/seeders/categories
+npx typeorm migration:create src/db/seeders/olm
 
 ```
 
