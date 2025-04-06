@@ -23,8 +23,14 @@ export class userRoles2679652234239 implements MigrationInterface {
         label: "client",
       }),
     );
-  }
+    const r5 = await queryRunner.manager.save(
+      queryRunner.manager.create(Role, {
+        code: RolesType.supervisor,
+        label: "supervisor",
+      }),
+    );
 
+  }
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`DELETE * FROM role`);
   }

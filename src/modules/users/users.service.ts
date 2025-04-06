@@ -9,7 +9,7 @@ import {
 import { InjectRepository } from "@nestjs/typeorm";
 import { RolesType } from "src/enums/roles.enum";
 import { encodePassword } from "src/utils/bycrpt.helper";
-import { In, IsNull, Not, Repository } from "typeorm";
+import { In, Repository } from "typeorm";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { User } from "./entities/user.entity";
 import { Order } from "src/enums/order.enum";
@@ -38,14 +38,14 @@ export class UsersService {
     @Inject(forwardRef(() => NotificationsService))
     private notificationsService: NotificationsService,
     private readonly userEventService: UserEventService,
-  ) {}
+  ) { }
 
   async create(createUserDto: CreateUserDto) {
     const user = await this.finOneByEmail(createUserDto.email);
     if (user) {
 
 
-      
+
       if (user.deletedAt) {
         await this.usersRepository.restore({ id: user.id });
         await this.addTokenToUser(createUserDto.fcmToken, user);
@@ -55,11 +55,12 @@ export class UsersService {
       }
     }
 
-    createUserDto.isActive = false;
-    createUserDto.isVerified = false;
     createUserDto.isBlocked = false;
-    createUserDto.role = new Role(RolesType.client);
-
+    createUserDto.isVerified = false;
+    createUserDto.isActive = true;
+    if (!createUserDto.role) {
+      createUserDto.role = new Role(RolesType.client);
+    }
     let key1 = uuidv1();
     let password = key1.split("-")[0];
     let returnPassword = false;
@@ -210,6 +211,7 @@ export class UsersService {
         subscirptionForm: {
           subscriptionOption: true,
           olm: true,
+          user: true,
         },
       },
       order: {
@@ -353,6 +355,22 @@ export class UsersService {
   async saveChanges(user: User) {
     return await this.usersRepository.save(user);
   }
+  async activateUser(id: number) {
+    const user = await this.usersRepository.findOne({
+      where: {
+        id: id,
+      },
+    });
+    return this.usersRepository.update(id, { isVerified: !user.isVerified });
+  }
+  async blockUser(id: number) {
+    const user = await this.usersRepository.findOne({
+      where: {
+        id: id,
+      },
+    });
+    return this.usersRepository.update(id, { isBlocked: !user.isBlocked });
+  }
   async finOneByEmail(email: string) {
     const user = await this.usersRepository.findOne({
       where: {
@@ -369,6 +387,7 @@ export class UsersService {
         countryCode: true,
         password: true,
         fullName: true,
+        isActive: true,
         language: true,
         role: {
           code: true,

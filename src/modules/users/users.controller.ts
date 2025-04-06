@@ -10,10 +10,8 @@ import {
   BadRequestException,
   Query,
   Patch,
-  UnauthorizedException,
   UploadedFile,
   Res,
-  UseInterceptors,
 } from "@nestjs/common";
 import { UsersService } from "./users.service";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
@@ -34,7 +32,7 @@ import { GetUsersQueryDto } from "./dto/get-users-query.dto";
 @UseGuards(JwtAuthGuard)
 @Controller("v1/users")
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(private readonly usersService: UsersService) { }
   @Get()
   async findAll(@Query() query: GetUsersQueryDto, @Req() req) {
     let companyId: number = req.user.companyId;
@@ -47,7 +45,7 @@ export class UsersController {
   }
   @Post("admin")
   createByAdmin(@Body() createUserDto: CreateUserDto, @Req() req) {
-    createUserDto.role = new Role(createUserDto.receivedRole);
+    createUserDto.role = new Role(RolesType.supervisor);
     return this.usersService.create(createUserDto);
   }
   @Public()
@@ -131,5 +129,13 @@ export class UsersController {
     res.sendFile(newPath, {
       root: root ?? process.env.ASSETS_DIR,
     });
+  }
+  @Patch('activate/:id')
+  activateUser(@Param('id') id: string) {
+    return this.usersService.activateUser(+id);
+  }
+  @Patch('block/:id')
+  blockUser(@Param('id') id: string) {
+    return this.usersService.blockUser(+id);
   }
 }

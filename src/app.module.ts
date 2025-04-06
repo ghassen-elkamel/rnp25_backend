@@ -24,6 +24,8 @@ import { UserEventModule } from "./modules/user-event/user-event.module";
 import { SubscirptionFormModule } from './modules/subscirption_form/subscirption_form.module';
 import { OlmModule } from './modules/olm/olm.module';
 import { SubscriptionOptionModule } from './modules/subscription-option/subscription-option.module';
+import { TaskModule } from './modules/task/task.module';
+import { SubtasksModule } from './modules/subtasks/subtasks.module';
 @Global()
 @Module({
   imports: [
@@ -53,6 +55,8 @@ import { SubscriptionOptionModule } from './modules/subscription-option/subscrip
     SubscirptionFormModule,
     OlmModule,
     SubscriptionOptionModule,
+    TaskModule,
+    SubtasksModule,
   ],
   controllers: [AppController],
   providers: [

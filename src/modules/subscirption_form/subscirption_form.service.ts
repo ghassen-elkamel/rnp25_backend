@@ -4,14 +4,16 @@ import { UpdateSubscirptionFormDto } from "./dto/update-subscirption_form.dto";
 import { InjectRepository } from "@nestjs/typeorm";
 import { SubscirptionForm } from "./entities/subscirption_form.entity";
 import { Repository } from "typeorm";
-
+import { v4 as uuidv4 } from 'uuid';
 import { UsersService } from "../users/users.service";
 import { OlmService } from "../olm/olm.service";
 import { SubscriptionOptionService } from "../subscription-option/subscription-option.service";
-import * as PDFDocument from "pdfkit";
-import * as fs from "fs";
+
 import * as path from "path";
 import * as QRCode from "qrcode";
+
+import { PdfService } from "src/utils/pdf-service";
+
 @Injectable()
 export class SubscirptionFormService {
   constructor(
@@ -19,9 +21,13 @@ export class SubscirptionFormService {
     private repository: Repository<SubscirptionForm>,
     private readonly userService: UsersService,
     private readonly olmService: OlmService,
+ 
+    private readonly pdfService: PdfService,
     private readonly subscriptionOptionService: SubscriptionOptionService,
-  ) {}
+  ) { }
   async create(createSubscirptionFormDto: CreateSubscirptionFormDto) {
+    createSubscirptionFormDto.createUserDto.isVerified = false;
+
     const user = await this.userService.create(createSubscirptionFormDto.createUserDto);
     if (user) {
       let olm = await this.olmService.findOne(createSubscirptionFormDto.olmId);
@@ -30,7 +36,7 @@ export class SubscirptionFormService {
       );
       createSubscirptionFormDto.olm = olm;
       createSubscirptionFormDto.user = user;
-
+      createSubscirptionFormDto.uuid = uuidv4();
       createSubscirptionFormDto.subscriptionOption = subscriptionOption;
       return this.repository.save(createSubscirptionFormDto);
     }
@@ -61,101 +67,49 @@ export class SubscirptionFormService {
     }
   }
 
-  async generateReceipt(subscriptionFormId: number): Promise<string> {
+  async generateReceipt(subscriptionFormId: number): Promise<Buffer> {
     // Get the subscription form with related entities
     const subscriptionForm = await this.repository.findOne({
       where: { id: subscriptionFormId },
       relations: ["user", "olm", "subscriptionOption"],
     });
-
+  
     if (!subscriptionForm) {
       throw new Error("Subscription form not found");
     }
+  
 
-    // Create the receipts directory if it doesn't exist
-    const uploadsDir = path.join(process.cwd(), "uploads", "receipts");
-    if (!fs.existsSync(uploadsDir)) {
-      fs.mkdirSync(uploadsDir, { recursive: true });
-    }
-
-    // Generate a filename for the receipt
-    const fileName = `receipt-${subscriptionFormId}-${Date.now()}.pdf`;
-    const filePath = path.join(uploadsDir, fileName);
-
-    // Generate QR code for the subscription UUID
     const qrCodeDataUrl = await QRCode.toDataURL(subscriptionForm.uuid);
-
-    // Create a PDF document
-    const doc = new PDFDocument({ margin: 50 });
-    const writeStream = fs.createWriteStream(filePath);
-    doc.pipe(writeStream);
-
-    // Add organization logo and header
-    doc.fontSize(25).text("Subscription Receipt", { align: "center" });
-    doc.moveDown();
-
-    // Add receipt information
-    doc.fontSize(12);
-    doc.text(`Receipt ID: ${subscriptionFormId}`);
-    doc.text(`Date: ${new Date().toLocaleDateString()}`);
-    doc.moveDown();
-
-    // Add user information
-    doc.fontSize(14).text("User Information:", { underline: true });
-    doc.fontSize(12);
-    doc.text(`Full Name: ${subscriptionForm.user.fullName}`);
-    doc.text(`Email: ${subscriptionForm.user.email}`);
-    doc.moveDown();
-
-    // Add subscription information
-    doc.fontSize(14).text("Subscription Details:", { underline: true });
-    doc.fontSize(12);
-    doc.text(`Position Type: ${subscriptionForm.positionType}`);
-    doc.text(`Position Title: ${subscriptionForm.positionTitle}`);
-    doc.text(`OLM: ${subscriptionForm.olm.name || subscriptionForm.olm.id}`);
-    doc.text(`Subscription UUID: ${subscriptionForm.uuid}`);
-    doc.moveDown();
-
-    // Add subscription option details
-    doc.fontSize(14).text("Subscription Plan:", { underline: true });
-    doc.fontSize(12);
-    doc.text(`Subscription Type: ${subscriptionForm.subscriptionOption.subscriptionType}`);
-    doc.text(`Price: $${subscriptionForm.subscriptionOption.price}`);
-    doc.moveDown();
-
-    // Add payment information and footer
-    doc.fontSize(14).text("Payment Information:", { underline: true });
-    doc.fontSize(12);
-    doc.text(`Amount Paid: $${subscriptionForm.subscriptionOption.price}`);
-    doc.text(`Payment Status: Completed`);
-    doc.moveDown(2);
-
-    // Add QR code to the right side of the page
-    doc.image(qrCodeDataUrl, 400, 50, { width: 150 });
-    doc.fontSize(10).text("Scan to verify subscription", 400, 210, { width: 150, align: "center" });
-
-    // Add footer
-    doc.fontSize(10).text("Thank you for your subscription!", { align: "center" });
-    doc.text("For questions or support, please contact our support team.", { align: "center" });
-
-    // Finalize the PDF
-    doc.end();
-
-    // Return a Promise that resolves when the file is written
-    return new Promise((resolve, reject) => {
-      writeStream.on("finish", async () => {
-        // Update the subscription form with the receipt path
-        const relativePath = path.join("receipts", fileName);
-        subscriptionForm.pathReciept = relativePath;
-        await this.repository.save(subscriptionForm);
-
-        resolve(relativePath);
-      });
-
-      writeStream.on("error", reject);
+    
+    const buffer = await this.pdfService.createPdf({
+      fileName: 'receipt.ejs',
+      data: {
+        subscriptionForm,
+        subscriptionFormId,
+        qrCodeDataUrl,
+      },
+    });
+    
+    const fileName = `receipt-${subscriptionFormId}-${Date.now()}.pdf`;
+    const relativePath = path.join("receipts", fileName);
+    subscriptionForm.pathReciept = relativePath;
+    
+    await this.repository.save(subscriptionForm);
+    
+    return buffer;
+  }
+  verifyUuid(uuid: string) {
+    return this.repository.findOne({
+      where: { 
+        uuid: uuid,
+       },
+      relations: {
+        user: true,
+        olm: true,
+        subscriptionOption: true,
+      }
     });
   }
-
   async getReceiptPath(subscriptionFormId: number): Promise<string> {
     const subscriptionForm = await this.repository.findOne({
       where: { id: subscriptionFormId },
@@ -166,5 +120,25 @@ export class SubscirptionFormService {
     }
 
     return subscriptionForm.pathReciept;
+  }
+  async findByUser(id: number) {
+ 
+    
+    let item = await this.repository.findOne({
+      where: {
+        user: {
+          id: id,
+        }, 
+        },
+      relations: {
+        user: true,
+        olm: true,
+        subscriptionOption: true,
+      }
+
+    });
+
+
+    return item;
   }
 }

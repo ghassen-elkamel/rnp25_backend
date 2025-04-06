@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, UploadedFile, Header, Res } from "@nestjs/common";
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, UploadedFile, Header, Res, Req } from "@nestjs/common";
 import { Response } from 'express';
 import { SubscirptionFormService } from "./subscirption_form.service";
 import { CreateSubscirptionFormDto } from "./dto/create-subscirption_form.dto";
@@ -13,20 +13,31 @@ import { FileTypeValidationPipe } from "src/pipes/file-type-validation.pipe";
 @UseGuards(JwtAuthGuard)
 @Controller("v1/subscription-form")
 export class SubscirptionFormController {
-  constructor(private readonly subscirptionFormService: SubscirptionFormService) {}
-
+  constructor(private readonly subscirptionFormService: SubscirptionFormService) { }
+@Public()
+  @Get('receipt/:id')
+  @Header('Content-Type', 'application/pdf')
+  @Header('Content-Disposition', 'attachment; filename=receipt.pdf')
+  async getReceipt(@Param('id') id: number, @Res() res: Response) {
+    const pdfBuffer = await this.subscirptionFormService.generateReceipt(+id);
+    return res.send(pdfBuffer);
+  }
   @Post()
   @Public()
   @ApiFile(process.env.UPLOAD_DIR + process.env.UPLOAD_RECIEPTS_DIR)
   create(@Body() createSubscirptionFormDto: CreateSubscirptionFormDto) {
     return this.subscirptionFormService.create(createSubscirptionFormDto);
   }
-  @Get('receipt/:id')
-@Header('Content-Type', 'application/pdf')
-async getReceipt(@Param('id') id: number, @Res() res: Response) {
-    const pdfBuffer = await this.subscirptionFormService.generateReceipt(id);
-    res.send(pdfBuffer);
-}
+  @Get('user')
+  findByUser( @Req() req) {
+    let userId = req.user.userId;
+   console.log("userId"); 
+   
+    console.log(userId);
+    
+    return this.subscirptionFormService.findByUser(userId);
+  }
+
   @Post("/receipt/:id")
   @Public()
   @ApiFile(process.env.UPLOAD_DIR + process.env.UPLOAD_RECIEPTS_DIR)
@@ -37,7 +48,10 @@ async getReceipt(@Param('id') id: number, @Res() res: Response) {
   ) {
     return this.subscirptionFormService.updateReceipt(id, file);
   }
-
+  @Get('verify-uuid/:uuid')
+  verifyUuid(@Param('uuid') uuid: string) {
+    return this.subscirptionFormService.verifyUuid(uuid);
+  }
   @Get()
   findAll() {
     return this.subscirptionFormService.findAll();

@@ -25,6 +25,18 @@ export class AuthService {
       throw new BadRequestException("invalidPassword");
     }
 
+    
+    
+    if (!user.isActive) {
+      throw new BadRequestException("userIsNotActive");
+    }
+    if (!user.isVerified) {
+      throw new BadRequestException("userIsNotVerified");
+    }
+    if (user.isBlocked) {
+      throw new BadRequestException("userIsBlocked");
+    }
+
     let newUser = await this.usersService.setLanguage(user.id, language);
     user.language = newUser.language;
     await this.usersService.addTokenToUser(auth.fcmToken, user);

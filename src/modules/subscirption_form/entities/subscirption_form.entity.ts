@@ -1,5 +1,6 @@
 import { CreationEntity } from "src/common/entities/creation.entity";
 import { PositionType } from "src/enums/position-type.enum";
+import { RoomType } from "src/enums/room-tyoe.enum";
 import { Olm } from "src/modules/olm/entities/olm.entity";
 import { SubscriptionOption } from "src/modules/subscription-option/entities/subscription-option.entity";
 import { User } from "src/modules/users/entities/user.entity";
@@ -24,12 +25,11 @@ export class SubscirptionForm extends CreationEntity {
   subscriptionOption: SubscriptionOption;
   @Column({ nullable: true })
   pathReciept: string;
-  @Column({ nullable: true,unique:true })
+  @Column({ unique:true })
   uuid: string;
-  @BeforeInsert()
- generateUUID() {
-   if (!this.uuid) {
-     this.uuid = uuidv4();
-   }
- }
+  @Column()
+  roomType: RoomType;
+  
+ @Column()
+  roommates: String ;
 }

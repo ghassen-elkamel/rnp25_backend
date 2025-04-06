@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Reçu d'Abonnement</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      color: #333;
+      background-color: #fef9c3;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 20px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+      position: relative;
+    }
+    .header-image {
+      width: 100%;
+      height: 150px;
+      background-color: #f5f5dc;
+      border-radius: 10px;
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 20px;
+      border: 1px solid #ddd;
+    }
+    .stripe {
+      position: absolute;
+      height: 100%;
+      width: 20px;
+      transform: skewX(-15deg);
+    }
+    .red-stripe {
+      background-color: rgba(231, 76, 60, 0.3);
+    }
+    .blue-stripe {
+      background-color: rgba(52, 152, 219, 0.3);
+    }
+    .flag {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      width: 40px;
+      height: 30px;
+      background-color: #e74c3c;
+    }
+    .flag img {
+      width: 100%;
+      height: 100%;
+    }
+    .heading {
+      font-size: 24px;
+      margin-bottom: 5px;
+    }
+    .year {
+      font-size: 28px;
+      font-weight: bold;
+    }
+    .receipt-info {
+      margin-bottom: 20px;
+    }
+    .section {
+      margin-bottom: 20px;
+    }
+    .section-title {
+      font-size: 16px;
+      font-weight: bold;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 5px;
+      margin-bottom: 10px;
+      color: #444;
+    }
+    .info-row {
+      display: flex;
+      margin-bottom: 8px;
+    }
+    .info-label {
+      flex: 1;
+      font-weight: bold;
+    }
+    .info-value {
+      flex: 2;
+    }
+    .footer {
+      margin-top: 30px;
+      text-align: center;
+      font-size: 12px;
+      color: #666;
+    }
+    .qr-code {
+      text-align: center;
+      margin: 30px auto;
+      width: 150px;
+    }
+    .qr-code img {
+      width: 100%;
+    }
+    .divider {
+      border-top: 1px dashed #ccc;
+      margin: 20px 0;
+    }
+    .info-block {
+      background-color: #f9f9f9;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+    }
+    .price {
+      font-size: 18px;
+      font-weight: bold;
+      color: #2c3e50;
+    }
+    .date-time {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .date-time-block {
+      flex: 1;
+    }
+    .date-time-value {
+      font-size: 18px;
+      font-weight: bold;
+    }
+    .registration-type {
+      margin-bottom: 20px;
+    }
+    .amount {
+      font-size: 22px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="header-image">
+        <!-- Decorative stripes similar to the image -->
+        <div class="stripe red-stripe" style="left: 10%;"></div>
+        <div class="stripe blue-stripe" style="left: 20%;"></div>
+        <div class="stripe red-stripe" style="left: 30%;"></div>
+        <div class="stripe blue-stripe" style="left: 40%;"></div>
+        <div class="stripe red-stripe" style="left: 50%;"></div>
+        <div class="stripe blue-stripe" style="left: 60%;"></div>
+        <div class="stripe red-stripe" style="left: 70%;"></div>
+        <div class="stripe blue-stripe" style="left: 80%;"></div>
+        <div class="flag">
+          <!-- Placeholder for flag icon -->
+        </div>
+      </div>
+      <h1 class="heading">Première Réunion Nationale des Présidents</h1>
+      <div class="year"><%= new Date().getFullYear() %></div>
+    </div>
+
+          <div class="date-time">
+      <div class="date-time-block">
+        <div class="section-title">Date</div>
+        <div class="date-time-value"><%= new Date().toLocaleDateString('fr-FR', { year: 'numeric', month: 'long', day: 'numeric' }) %></div>
+      </div>
+      <div class="date-time-block">
+        <div class="section-title">Heure</div>
+        <div class="date-time-value"><%= new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) %></div>
+      </div>
+    </div>
+
+    <div class="registration-type">
+      <div class="section-title">Type d'Inscription</div>
+      <div class="info-row">
+        <div class="info-value"><%= subscriptionForm.subscriptionOption.subscriptionType %>: <span class="amount"><%= subscriptionForm.subscriptionOption.price %> TND</span></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Hébergement</div>
+      <div class="info-row">
+        <div class="info-value"><%= subscriptionForm.accommodation || "Chambre Simple" %></div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="section">
+      <div class="section-title">Informations du Reçu</div>
+      <div class="info-row">
+        <div class="info-label">ID du Reçu:</div>
+        <div class="info-value">RCT-<%= subscriptionFormId %></div>
+      </div>
+      <div class="info-row">
+        <div class="info-label">Date:</div>
+        <div class="info-value"><%= new Date().toLocaleDateString('fr-FR') %></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Informations Utilisateur</div>
+      <div class="info-row">
+        <div class="info-label">Nom Complet:</div>
+        <div class="info-value"><%= subscriptionForm.user.fullName %></div>
+      </div>
+      <div class="info-row">
+        <div class="info-label">Email:</div>
+        <div class="info-value"><%= subscriptionForm.user.email %></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Détails de l'Abonnement</div>
+      <div class="info-row">
+        <div class="info-label">Type de Position:</div>
+        <div class="info-value"><%= subscriptionForm.positionType %></div>
+      </div>
+      <div class="info-row">
+        <div class="info-label">Titre de Position:</div>
+        <div class="info-value"><%= subscriptionForm.positionTitle %></div>
+      </div>
+      <div class="info-row">
+        <div class="info-label">OLM:</div>
+        <div class="info-value"><%= subscriptionForm.olm.name || subscriptionForm.olm.id %></div>
+      </div>
+      <div class="info-row">
+        <div class="info-label">UUID d'Abonnement:</div>
+        <div class="info-value"><%= subscriptionForm.uuid %></div>
+      </div>
+    </div>
+
+    <div class="section info-block">
+      <div class="section-title">Plan d'Abonnement</div>
+      <div class="info-row">
+        <div class="info-label">Type d'Abonnement:</div>
+        <div class="info-value"><%= subscriptionForm.subscriptionOption.subscriptionType %></div>
+      </div>
+      <div class="info-row">
+        <div class="info-label">Prix:</div>
+        <div class="info-value price"><%= subscriptionForm.subscriptionOption.price %> TND</div>
+      </div>
+    </div>
+
+    <div class="section info-block">
+      <div class="section-title">Informations de Paiement</div>
+      <div class="info-row">
+        <div class="info-label">Montant Payé:</div>
+        <div class="info-value price"><%= subscriptionForm.subscriptionOption.price %> TND</div>
+      </div>
+      <div class="info-row">
+        <div class="info-label">Statut de Paiement:</div>
+        <div class="info-value">Complété</div>
+      </div>
+    </div>
+
+    <div class="qr-code">
+      <img src="<%= qrCodeDataUrl %>" alt="QR Code">
+      <div style="text-align: center; font-size: 10px;">Scannez pour vérifier l'abonnement</div>
+    </div>
+
+    <div class="footer">
+      <p>Merci pour votre abonnement!</p>
+      <p>Pour toute question ou assistance, veuillez contacter notre équipe de support.</p>
+    </div>
+  </div>
+</body>
+</html>
