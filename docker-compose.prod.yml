@@ -9,9 +9,8 @@ services:
       target: production # Target the production stage in Dockerfile
       dockerfile: Dockerfile
     ports:
-      # Map the container port (from .env) to host port 3000
-      # Nginx will proxy to this host port
-      - "3000:${PORT_OUT:-4000}" # Default internal port to 4000 based on your .env
+      - "3000:4000" # Map host port 3000 to container port 4000 (use ${PORT_OUT:-4000} if PORT_OUT=4000 in .env)
+
     env_file:
       - .env # Load environment variables from .env file on the host
     volumes:
@@ -24,6 +23,8 @@ services:
   mssql:
     container_name: rnp25_mssql_prod
     image: mcr.microsoft.com/mssql/server:2022-latest # Use the official MS SQL Server image
+    ports:
+      - "1433:1433"
     environment:
       ACCEPT_EULA: "Y" # Required acceptance
       SA_PASSWORD: "${DB_PASSWORD}" # Get password from .env file on the host
