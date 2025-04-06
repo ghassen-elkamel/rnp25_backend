@@ -1,0 +1,40 @@
+version: "3.8"
+
+services:
+  app:
+    container_name: rnp25_backend_prod
+    image: rnp25_backend_app # Optionally push this image to a registry
+    build:
+      context: .
+      target: production # Target the production stage in Dockerfile
+      dockerfile: Dockerfile
+    ports:
+      - "3000:4000" # Map host port 3000 to container port 4000 (use ${PORT_OUT:-4000} if PORT_OUT=4000 in .env)
+
+    env_file:
+      - .env # Load environment variables from .env file on the host
+    volumes:
+      # Mount the named volume 'uploads' to persist uploaded files
+      - uploads:/usr/src/app/uploads # Path inside the container for uploads
+    depends_on:
+      - mssql
+    restart: unless-stopped
+
+  mssql:
+    container_name: rnp25_mssql_prod
+    image: mcr.microsoft.com/mssql/server:2022-latest # Use the official MS SQL Server image
+    ports:
+      - "1433:1433"
+    environment:
+      ACCEPT_EULA: "Y" # Required acceptance
+      SA_PASSWORD: "${DB_PASSWORD}" # Get password from .env file on the host
+      # MSSQL_PID: "Express" # Optional: Use Express edition if suitable (free, but resource limited)
+    volumes:
+      # Mount the named volume 'mssql_data' to persist database files
+      - mssql_data:/var/opt/mssql
+    restart: unless-stopped
+
+# Define the named volumes managed by Docker
+volumes:
+  uploads: # For application file uploads
+  mssql_data: # For SQL Server database persistence
