@@ -30,18 +30,18 @@ export class NotificationsService {
     @Inject(forwardRef(() => UsersService))
     private usersService: UsersService,
   ) {
-    // this.appDev = firebase.initializeApp(
-    //   {
-    //     credential: firebase.credential.cert(firebaseCredentialsDev as ServiceAccount),
-    //   },
-    //   "dev",
-    // );
-    // this.appProd = firebase.initializeApp(
-    //   {
-    //     credential: firebase.credential.cert(firebaseCredentialsProd as ServiceAccount),
-    //   },
-    //   "prod",
-    // );
+    this.appDev = firebase.initializeApp(
+      {
+        credential: firebase.credential.cert(firebaseCredentialsDev as ServiceAccount),
+      },
+      "dev",
+    );
+    this.appProd = firebase.initializeApp(
+      {
+        credential: firebase.credential.cert(firebaseCredentialsProd as ServiceAccount),
+      },
+      "prod",
+    );
   }
 
   async findOneByKey(key: NotificationType): Promise<NotificationEntity> {
@@ -50,6 +50,9 @@ export class NotificationsService {
         key: key,
       },
     });
+    console.log("***INFO[Notifications]***");
+    console.log(notification);
+    
     return notification;
   }
 
@@ -72,6 +75,9 @@ export class NotificationsService {
     employee: string;
     data?: {};
   }) {
+
+    
+    
     let notification = await this.findOneByKey(args.key);
     let language = await this.usersService.getLanguage(args.receiverId);
     let title: string = notification.title;
@@ -144,12 +150,12 @@ export class NotificationsService {
       }
 
       try {
-        // if (process.env.APP_ENV == 'dev') {
-        //   await this.appDev.messaging().sendEach(pushMessages);
-        // } else {
-        //   await this.appProd.messaging().sendEach(pushMessages);
-        // }
-        await this.appDev.messaging().sendEach(pushMessages);
+        if (process.env.APP_ENV == 'dev') {
+          await this.appDev.messaging().sendEach(pushMessages);
+        } else {
+          await this.appProd.messaging().sendEach(pushMessages);
+        }
+    
       } catch (e) {
         console.log(e);
       }
@@ -221,6 +227,28 @@ export class NotificationsService {
         let message = await this.createMessage({
           token: notificationToken.token,
 
+          senderId: args.senderId,
+          receiverId: user.id,
+          key: args.key,
+          me: "",
+          client: "",
+          employee: "",
+        });
+        messages.push(message);
+      }
+    }
+    return this.sendMessages(messages);
+  }
+
+  public async sendToAllUsers(args: { key: NotificationType; senderId?: number }) {
+    const users: User[] = await this.usersService.findAllWithNotificationTokens();
+
+    let messages = [];
+
+    for (const user of users) {
+      for (const notificationToken of user.notificationToken) {
+        let message = await this.createMessage({
+          token: notificationToken.token,
           senderId: args.senderId,
           receiverId: user.id,
           key: args.key,

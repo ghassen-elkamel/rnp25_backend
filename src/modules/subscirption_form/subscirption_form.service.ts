@@ -26,6 +26,7 @@ export class SubscirptionFormService {
     private readonly subscriptionOptionService: SubscriptionOptionService,
   ) { }
   async create(createSubscirptionFormDto: CreateSubscirptionFormDto) {
+
     createSubscirptionFormDto.createUserDto.isVerified = false;
 
     const user = await this.userService.create(createSubscirptionFormDto.createUserDto);
@@ -62,8 +63,11 @@ export class SubscirptionFormService {
   async updateReceipt(id: number, file: Express.Multer.File) {
     let susbcriptionForm = await this.findOne(id);
     if (susbcriptionForm) {
-      susbcriptionForm.pathReciept = file.filename;
-      return this.repository.save(susbcriptionForm);
+      susbcriptionForm.pathPicture = file.filename;
+      return this.repository.save(susbcriptionForm
+       
+
+      );
     }
   }
 

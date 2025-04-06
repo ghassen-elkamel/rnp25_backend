@@ -8,4 +8,6 @@ export enum NotificationType {
   sendProposal = "sendProposal",
   acceptProposal = "acceptProposal",
   cancelProposal = "cancelProposal",
+  newEventAdded = "newEventAdded",
+  
 }

@@ -56,7 +56,10 @@ export class UsersService {
     }
 
     createUserDto.isBlocked = false;
-    createUserDto.isVerified = false;
+    if(createUserDto.role==new Role(RolesType.supervisor)){
+      createUserDto.isVerified = true;
+    }else{
+    createUserDto.isVerified = false;}
     createUserDto.isActive = true;
     if (!createUserDto.role) {
       createUserDto.role = new Role(RolesType.client);
@@ -273,6 +276,7 @@ export class UsersService {
         me: user.firstName + " " + user.lastName,
         client: "",
         employee: "",
+        
       });
 
       this.notificationsService.sendMessages([message]);
@@ -292,22 +296,24 @@ export class UsersService {
   }
 
   async findUsersByBranchId(branchId: number) {
-    let roles = [RolesType.admin];
     const users = await this.usersRepository.find({
       where: {
-        role: {
-          code: In(roles),
-        },
+        // Assuming you have a relation to branch in User entity
+        // branch: { id: branchId },
       },
       relations: {
-        role: true,
-
         notificationToken: true,
       },
     });
+    return users;
+  }
 
-    if (!users) throw new NotFoundException("Users does not exist");
-
+  async findAllWithNotificationTokens(): Promise<User[]> {
+    const users = await this.usersRepository.find({
+      relations: {
+        notificationToken: true,
+      },
+    });
     return users;
   }
 

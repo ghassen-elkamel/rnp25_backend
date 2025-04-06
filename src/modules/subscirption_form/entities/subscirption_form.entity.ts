@@ -32,4 +32,6 @@ export class SubscirptionForm extends CreationEntity {
   
  @Column()
   roommates: String ;
+  @Column({ nullable: true })
+  pathPicture: string;
 }

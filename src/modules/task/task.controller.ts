@@ -34,7 +34,13 @@ export class TaskController {
 
     return this.taskService.create(createTaskDto);
   }
-
+  @Public()
+  @Get('photo')
+  getTaskImage(@Res() res, @Query('path') path) {
+    res.sendFile(path, {
+      root: process.env.UPLOAD_DIR + '/tasks',
+    });
+  }
   @Get()
   findAll() {
     return this.taskService.findAll();
@@ -66,11 +72,5 @@ export class TaskController {
   
 
   
-  @Public()
-  @Get('image')
-  getTaskImage(@Res() res, @Query('path') path) {
-    res.sendFile(path, {
-      root: process.env.UPLOAD_DIR + '/tasks',
-    });
-  }
+  
 }
