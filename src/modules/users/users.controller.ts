@@ -46,6 +46,7 @@ export class UsersController {
   @Post("admin")
   createByAdmin(@Body() createUserDto: CreateUserDto, @Req() req) {
     createUserDto.role = new Role(RolesType.supervisor);
+  
     return this.usersService.create(createUserDto);
   }
   @Public()

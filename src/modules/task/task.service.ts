@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, Inject } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Task } from './entities/task.entity';
@@ -6,12 +6,19 @@ import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import * as fs from 'fs';
 import * as path from 'path';
+import { NotificationsService } from '../notifications/notifications.service';
+import { UsersService } from '../users/users.service';
+import { NotificationType } from 'src/enums/notification.enum';
 
 @Injectable()
 export class TaskService {
   constructor(
     @InjectRepository(Task)
     private tasksRepository: Repository<Task>,
+    @Inject(NotificationsService)
+    private notificationsService: NotificationsService,
+    @Inject(UsersService)
+    private usersService: UsersService,
   ) {}
 
   async create(createTaskDto: CreateTaskDto) {
@@ -24,7 +31,15 @@ export class TaskService {
     task.timeStart = createTaskDto.timeStart;
     task.isExpandable = createTaskDto.isExpandable || false;
     
-    return this.tasksRepository.save(task);
+    const savedTask = await this.tasksRepository.save(task);
+
+    try {
+        await this.notificationsService.sendToAllUsers({ key: NotificationType.newEventAdded });
+    } catch (error) {
+        console.error('Failed to send new task notification:', error);
+    }
+
+    return savedTask;
   }
 
   async findAll() {

@@ -32,6 +32,8 @@ export class CreateSubscirptionFormDto {
     @ApiProperty()
 
     roommates: String;
+    @ApiProperty()
+    pathPicture: string;
 
 
 

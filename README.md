@@ -52,7 +52,7 @@ docker exec -it <container name> /bin/bash
 
 ```
 
-npx typeorm migration:generate src/db/migrations/task -d dist/db/data-source.js
+npx typeorm migration:generate src/db/migrations/receipt_picture -d dist/db/data-source.js
 
 ```
 4- Excecute the migration

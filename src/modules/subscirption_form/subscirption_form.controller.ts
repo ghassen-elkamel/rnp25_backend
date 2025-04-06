@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, UploadedFile, Header, Res, Req } from "@nestjs/common";
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, UploadedFile, Header, Res, Req, Query } from "@nestjs/common";
 import { Response } from 'express';
 import { SubscirptionFormService } from "./subscirption_form.service";
 import { CreateSubscirptionFormDto } from "./dto/create-subscirption_form.dto";
@@ -14,7 +14,14 @@ import { FileTypeValidationPipe } from "src/pipes/file-type-validation.pipe";
 @Controller("v1/subscription-form")
 export class SubscirptionFormController {
   constructor(private readonly subscirptionFormService: SubscirptionFormService) { }
-@Public()
+  @Public()
+  @Get(':uploads/receipt')
+  getTaskImage(@Res() res, @Query('path') path) {
+    res.sendFile(path, {
+      root: process.env.UPLOAD_DIR + '/reciepts'
+    });
+  }
+  @Public()
   @Get('receipt/:id')
   @Header('Content-Type', 'application/pdf')
   @Header('Content-Disposition', 'attachment; filename=receipt.pdf')
