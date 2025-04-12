@@ -37,6 +37,7 @@ export class TaskController {
   @Public()
   @Get('photo')
   getTaskImage(@Res() res, @Query('path') path) {
+
     res.sendFile(path, {
       root: process.env.UPLOAD_DIR + '/tasks',
     });

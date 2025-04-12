@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Reçu d'Abonnement</title>
+  <title>Badge d'Événement</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -10,261 +10,248 @@
       padding: 0;
       color: #333;
       background-color: #fef9c3;
+      font-size: 11px;
     }
     .container {
-      max-width: 600px;
+      max-width: 550px;
       margin: 0 auto;
-      padding: 20px;
+      padding: 0;
       background-color: #fff;
-      border-radius: 20px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    }
-    .header {
-      text-align: center;
-      margin-bottom: 30px;
-      position: relative;
-    }
-    .header-image {
-      width: 100%;
-      height: 150px;
-      background-color: #f5f5dc;
-      border-radius: 10px;
-      position: relative;
+      border-radius: 15px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
       overflow: hidden;
-      margin-bottom: 20px;
       border: 1px solid #ddd;
+      position: relative;
     }
-    .stripe {
+    .badge-header {
+      background-color: #f8dc3d;
+      padding: 15px 20px;
+      text-align: center;
+      position: relative;
+      border-bottom: 3px solid #e6c300;
+    }
+    .badge-title {
+      font-size: 22px;
+      font-weight: bold;
+      margin-bottom: 4px;
+      color: #333;
+    }
+    .badge-year {
+      font-size: 26px;
+      font-weight: bold;
+    }
+    .badge-content {
+      padding: 20px;
+      position: relative;
+    }
+    .badge-corner {
       position: absolute;
-      height: 100%;
-      width: 20px;
-      transform: skewX(-15deg);
-    }
-    .red-stripe {
-      background-color: rgba(231, 76, 60, 0.3);
-    }
-    .blue-stripe {
-      background-color: rgba(52, 152, 219, 0.3);
-    }
-    .flag {
-      position: absolute;
-      bottom: 20px;
-      left: 20px;
       width: 40px;
-      height: 30px;
-      background-color: #e74c3c;
+      height: 40px;
+      border-radius: 50%;
+      background-color: #f8dc3d;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      color: #333;
+      z-index: 2;
     }
-    .flag img {
-      width: 100%;
-      height: 100%;
+    .top-left {
+      top: -15px;
+      left: -15px;
     }
-    .heading {
+    .top-right {
+      top: -15px;
+      right: -15px;
+    }
+    .bottom-left {
+      bottom: -15px;
+      left: -15px;
+    }
+    .bottom-right {
+      bottom: -15px;
+      right: -15px;
+    }
+    .profile-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 20px;
+      text-align: center;
+      position: relative;
+    }
+    .profile-photo {
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 5px solid #f8dc3d;
+      margin-bottom: 15px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+    .user-name {
+      font-weight: bold;
       font-size: 24px;
       margin-bottom: 5px;
+      color: #222;
     }
-    .year {
-      font-size: 28px;
+    .user-position {
+      color: #444;
+      font-size: 18px;
+      margin-bottom: 5px;
+      font-style: italic;
+    }
+    .user-details {
+      font-size: 14px;
+      margin-bottom: 3px;
+      color: #555;
+    }
+    .badge-info {
+      display: flex;
+      margin: 15px 0;
+      background-color: #f9f9f9;
+      border-radius: 10px;
+      padding: 12px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+      border: 1px solid #eee;
+    }
+    .badge-info-item {
+      flex: 1;
+      text-align: center;
+      padding: 0 5px;
+    }
+    .badge-info-title {
+      font-size: 12px;
       font-weight: bold;
+      color: #666;
+      margin-bottom: 5px;
+      text-transform: uppercase;
     }
-    .receipt-info {
-      margin-bottom: 20px;
-    }
-    .section {
-      margin-bottom: 20px;
-    }
-    .section-title {
+    .badge-info-value {
       font-size: 16px;
       font-weight: bold;
-      border-bottom: 1px solid #ddd;
-      padding-bottom: 5px;
-      margin-bottom: 10px;
-      color: #444;
+      color: #333;
     }
-    .info-row {
+    .badge-divider {
+      height: 40px;
+      width: 1px;
+      background-color: #ddd;
+      margin: 0 10px;
+    }
+    .qr-section {
       display: flex;
-      margin-bottom: 8px;
-    }
-    .info-label {
-      flex: 1;
-      font-weight: bold;
-    }
-    .info-value {
-      flex: 2;
-    }
-    .footer {
-      margin-top: 30px;
-      text-align: center;
-      font-size: 12px;
-      color: #666;
+      flex-direction: column;
+      align-items: center;
+      margin: 15px 0;
     }
     .qr-code {
-      text-align: center;
-      margin: 30px auto;
-      width: 150px;
+      width: 200px;
+      height: 200px;
+      padding: 10px;
+      background-color: white;
+      border: 3px solid #f0f0f0;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     }
     .qr-code img {
       width: 100%;
+      height: 100%;
     }
-    .divider {
-      border-top: 1px dashed #ccc;
-      margin: 20px 0;
-    }
-    .info-block {
-      background-color: #f9f9f9;
-      padding: 15px;
-      border-radius: 8px;
-      margin-bottom: 15px;
-    }
-    .price {
-      font-size: 18px;
-      font-weight: bold;
-      color: #2c3e50;
-    }
-    .date-time {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 20px;
-    }
-    .date-time-block {
-      flex: 1;
-    }
-    .date-time-value {
-      font-size: 18px;
+    .qr-caption {
+      font-size: 12px;
+      color: #666;
+      margin-top: 8px;
       font-weight: bold;
     }
-    .registration-type {
-      margin-bottom: 20px;
-    }
-    .amount {
-      font-size: 22px;
+    .badge-footer {
+      background-color: #f8dc3d;
+      padding: 10px;
+      text-align: center;
+      font-size: 10px;
+      color: #333;
       font-weight: bold;
+    }
+    .badge-id {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background-color: #f8dc3d;
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-weight: bold;
+      font-size: 12px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <div class="header">
-      <div class="header-image">
-        <!-- Decorative stripes similar to the image -->
-        <div class="stripe red-stripe" style="left: 10%;"></div>
-        <div class="stripe blue-stripe" style="left: 20%;"></div>
-        <div class="stripe red-stripe" style="left: 30%;"></div>
-        <div class="stripe blue-stripe" style="left: 40%;"></div>
-        <div class="stripe red-stripe" style="left: 50%;"></div>
-        <div class="stripe blue-stripe" style="left: 60%;"></div>
-        <div class="stripe red-stripe" style="left: 70%;"></div>
-        <div class="stripe blue-stripe" style="left: 80%;"></div>
-        <div class="flag">
-          <!-- Placeholder for flag icon -->
+    <!-- Badge Corners -->
+    <div class="badge-corner top-left">RNP</div>
+    <div class="badge-corner top-right"><%= new Date().getFullYear() %></div>
+    <div class="badge-corner bottom-left">TN</div>
+    <div class="badge-corner bottom-right">ID</div>
+    
+    <!-- Badge Header -->
+    <div class="badge-header">
+      <div class="badge-title">Première Réunion Nationale des Présidents</div>
+      <div class="badge-year"><%= new Date().getFullYear() %></div>
+    </div>
+    
+    <!-- Badge Content -->
+    <div class="badge-content">
+      <div class="badge-id">ID: RNP-<%= subscriptionFormId %></div>
+      
+      <!-- Profile Section -->
+      <div class="profile-section">
+        <% if (profilePictureDataUrl) { %>
+          <img class="profile-photo" src="<%= profilePictureDataUrl %>" alt="Profile Photo">
+        <% } else { %>
+          <div class="profile-photo" style="background-color: #f0f0f0; display: flex; justify-content: center; align-items: center;">
+            <span style="font-size: 80px; color: #888;">👤</span>
+          </div>
+        <% } %>
+        
+        <div class="user-name"><%= subscriptionForm.user.fullName %></div>
+        <div class="user-position"><%= subscriptionForm.positionType %> <%= subscriptionForm.positionTitle ? `- ${subscriptionForm.positionTitle}` : '' %></div>
+        <div class="user-details"><%= subscriptionForm.user.email %></div>
+        <div class="user-details"><%= subscriptionForm.olm.name || subscriptionForm.olm.id %></div>
+      </div>
+      
+      <!-- Badge Info -->
+      <div class="badge-info">
+        <div class="badge-info-item">
+          <div class="badge-info-title">Date</div>
+          <div class="badge-info-value"><%= new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long'}) %></div>
+        </div>
+        
+        <div class="badge-divider"></div>
+        
+        <div class="badge-info-item">
+          <div class="badge-info-title">Type</div>
+          <div class="badge-info-value"><%= subscriptionForm.subscriptionOption.subscriptionType %></div>
+        </div>
+        
+        <div class="badge-divider"></div>
+        
+        <div class="badge-info-item">
+          <div class="badge-info-title">Montant</div>
+          <div class="badge-info-value"><%= subscriptionForm.subscriptionOption.price %> TND</div>
         </div>
       </div>
-      <h1 class="heading">Première Réunion Nationale des Présidents</h1>
-      <div class="year"><%= new Date().getFullYear() %></div>
-    </div>
-
-          <div class="date-time">
-      <div class="date-time-block">
-        <div class="section-title">Date</div>
-        <div class="date-time-value"><%= new Date().toLocaleDateString('fr-FR', { year: 'numeric', month: 'long', day: 'numeric' }) %></div>
-      </div>
-      <div class="date-time-block">
-        <div class="section-title">Heure</div>
-        <div class="date-time-value"><%= new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) %></div>
+      
+      <!-- QR Code Section -->
+      <div class="qr-section">
+        <div class="qr-code">
+          <img src="<%= qrCodeDataUrl %>" alt="QR Code">
+        </div>
+        <div class="qr-caption">Scannez pour vérifier l'abonnement</div>
       </div>
     </div>
-
-    <div class="registration-type">
-      <div class="section-title">Type d'Inscription</div>
-      <div class="info-row">
-        <div class="info-value"><%= subscriptionForm.subscriptionOption.subscriptionType %>: <span class="amount"><%= subscriptionForm.subscriptionOption.price %> TND</span></div>
-      </div>
-    </div>
-
-    <div class="section">
-      <div class="section-title">Hébergement</div>
-      <div class="info-row">
-        <div class="info-value"><%= subscriptionForm.accommodation || "Chambre Simple" %></div>
-      </div>
-    </div>
-
-    <div class="divider"></div>
-
-    <div class="section">
-      <div class="section-title">Informations du Reçu</div>
-      <div class="info-row">
-        <div class="info-label">ID du Reçu:</div>
-        <div class="info-value">RCT-<%= subscriptionFormId %></div>
-      </div>
-      <div class="info-row">
-        <div class="info-label">Date:</div>
-        <div class="info-value"><%= new Date().toLocaleDateString('fr-FR') %></div>
-      </div>
-    </div>
-
-    <div class="section">
-      <div class="section-title">Informations Utilisateur</div>
-      <div class="info-row">
-        <div class="info-label">Nom Complet:</div>
-        <div class="info-value"><%= subscriptionForm.user.fullName %></div>
-      </div>
-      <div class="info-row">
-        <div class="info-label">Email:</div>
-        <div class="info-value"><%= subscriptionForm.user.email %></div>
-      </div>
-    </div>
-
-    <div class="section">
-      <div class="section-title">Détails de l'Abonnement</div>
-      <div class="info-row">
-        <div class="info-label">Type de Position:</div>
-        <div class="info-value"><%= subscriptionForm.positionType %></div>
-      </div>
-      <div class="info-row">
-        <div class="info-label">Titre de Position:</div>
-        <div class="info-value"><%= subscriptionForm.positionTitle %></div>
-      </div>
-      <div class="info-row">
-        <div class="info-label">OLM:</div>
-        <div class="info-value"><%= subscriptionForm.olm.name || subscriptionForm.olm.id %></div>
-      </div>
-      <div class="info-row">
-        <div class="info-label">UUID d'Abonnement:</div>
-        <div class="info-value"><%= subscriptionForm.uuid %></div>
-      </div>
-    </div>
-
-    <div class="section info-block">
-      <div class="section-title">Plan d'Abonnement</div>
-      <div class="info-row">
-        <div class="info-label">Type d'Abonnement:</div>
-        <div class="info-value"><%= subscriptionForm.subscriptionOption.subscriptionType %></div>
-      </div>
-      <div class="info-row">
-        <div class="info-label">Prix:</div>
-        <div class="info-value price"><%= subscriptionForm.subscriptionOption.price %> TND</div>
-      </div>
-    </div>
-
-    <div class="section info-block">
-      <div class="section-title">Informations de Paiement</div>
-      <div class="info-row">
-        <div class="info-label">Montant Payé:</div>
-        <div class="info-value price"><%= subscriptionForm.subscriptionOption.price %> TND</div>
-      </div>
-      <div class="info-row">
-        <div class="info-label">Statut de Paiement:</div>
-        <div class="info-value">Complété</div>
-      </div>
-    </div>
-
-    <div class="qr-code">
-      <img src="<%= qrCodeDataUrl %>" alt="QR Code">
-      <div style="text-align: center; font-size: 10px;">Scannez pour vérifier l'abonnement</div>
-    </div>
-
-    <div class="footer">
-      <p>Merci pour votre abonnement!</p>
-      <p>Pour toute question ou assistance, veuillez contacter notre équipe de support.</p>
+    
+    <!-- Badge Footer -->
+    <div class="badge-footer">
+      ID: <%= subscriptionForm.uuid %> | Valide jusqu'au 31 décembre <%= new Date().getFullYear() %>
     </div>
   </div>
 </body>
