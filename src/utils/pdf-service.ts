@@ -26,9 +26,17 @@ export class PdfService {
         args: ['--no-sandbox', '--headless', '--disable-gpu'],
       });
       const page = await browser.newPage();
+      
+      // Allow images to load from any domain
+      await page.setBypassCSP(true);
+      
       let html = await ejs.renderFile(filePath, args.data);
 
-      await page.setContent(html);
+      // Load the HTML and wait for images to load
+      await page.setContent(html, {
+        waitUntil: 'networkidle0', // Wait until no network connections for 500ms
+        timeout: 30000 // Increase timeout to 30 seconds
+      });
 
       let pageNumber = '';
       if (args.userCreated != null) {

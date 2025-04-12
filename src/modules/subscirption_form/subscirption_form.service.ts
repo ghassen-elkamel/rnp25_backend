@@ -11,6 +11,7 @@ import { SubscriptionOptionService } from "../subscription-option/subscription-o
 
 import * as path from "path";
 import * as QRCode from "qrcode";
+import * as fs from "fs";
 
 import { PdfService } from "src/utils/pdf-service";
 
@@ -82,8 +83,32 @@ export class SubscirptionFormService {
       throw new Error("Subscription form not found");
     }
   
-
+    // Generate QR code
     const qrCodeDataUrl = await QRCode.toDataURL(subscriptionForm.uuid);
+    
+    // Create hostPath
+    const hostPath = process.env.HOST_PATH || `${process.env.PROTOCOL}://${process.env.HOST}:${process.env.PORT}`;
+    
+    // Load profile picture into data URL if it exists
+    let profilePictureDataUrl = null;
+    if (subscriptionForm.user.pathPicture) {
+      try {
+        const profilePicturePath = path.join(
+          process.env.UPLOAD_DIR + process.env.UPLOAD_PROFILES_DIR,
+          subscriptionForm.user.pathPicture
+        );
+        
+        // Check if file exists
+        if (fs.existsSync(profilePicturePath)) {
+          // Read the file and convert it to a data URL
+          const imageBuffer = fs.readFileSync(profilePicturePath);
+          const mimeType = this.getMimeType(subscriptionForm.user.pathPicture);
+          profilePictureDataUrl = `data:${mimeType};base64,${imageBuffer.toString('base64')}`;
+        }
+      } catch (err) {
+        console.error('Error loading profile picture:', err);
+      }
+    }
     
     const buffer = await this.pdfService.createPdf({
       fileName: 'receipt.ejs',
@@ -91,6 +116,8 @@ export class SubscirptionFormService {
         subscriptionForm,
         subscriptionFormId,
         qrCodeDataUrl,
+        hostPath,
+        profilePictureDataUrl,
       },
     });
     
@@ -101,6 +128,21 @@ export class SubscirptionFormService {
     await this.repository.save(subscriptionForm);
     
     return buffer;
+  }
+  
+  // Helper to determine mime type from file extension
+  private getMimeType(filename: string): string {
+    const ext = path.extname(filename).toLowerCase();
+    const mimeTypes = {
+      '.jpg': 'image/jpeg',
+      '.jpeg': 'image/jpeg',
+      '.png': 'image/png',
+      '.gif': 'image/gif',
+      '.bmp': 'image/bmp',
+      '.webp': 'image/webp',
+    };
+    
+    return mimeTypes[ext] || 'application/octet-stream';
   }
   verifyUuid(uuid: string) {
     return this.repository.findOne({
