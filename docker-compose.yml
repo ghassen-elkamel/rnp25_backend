@@ -1,8 +1,6 @@
-version: "3.6"
-
 services:
   backend:
-    image: node:18
+    image: node:24
     container_name: rnp25_backend_dev
     ports:
       - "${PORT_OUT}:${PORT_OUT}"
@@ -11,11 +9,26 @@ services:
     build:
       context: .
       target: development
-      dockerfile: DockerfileDev
+      dockerfile: Dockerfile
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules
       - uploads:/uploads
+    depends_on:
+      - mssql
+
+  mssql:
+    container_name: rnp25_mssql_dev
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    ports:
+      - "1433:1433"
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "${DB_PASSWORD}"
+    volumes:
+      - mssql_data:/var/opt/mssql
+    restart: unless-stopped
 
 volumes:
   uploads:
+  mssql_data:
